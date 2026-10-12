@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/img/logo.svg" />
+  <link rel="stylesheet" href="/styles/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+  <script>
+    window.isProfile = true;
+    if (!window.localStorage.getItem("auth")) {
+      window.location.href = "/register.html";
+    }
+  </script>
+  <title>Coin Sniper Bot</title>
+</head>
+<body>
+  <header class="header">
+    <div class="header__inner">
+      <div class="header__left">
+        <a class="header__logo" href="/">
+          <img src="/img/logo.svg" alt="" srcset="" />
+          <span>COIN SNIPER BOT</span>
+        </a>
+        <div class="header__block">
+          <a href="/" class="header__link left_side">
+            <img src="/img/trading.svg" alt="" />
+            Trading
+          </a>
+          <a href="/statistics.html" class="header__link left_side">
+            <img src="/img/statistics.svg" alt="" />
+            Statistics
+          </a>
+        </div>
+      </div>
+      <div class="header__right">
+        <div class="header__block">
+          <div class="header__link button">
+            <img src="/img/wallet.svg" alt="" />
+            <span>$<span id="headerWalletBalance" style="color: white; padding-left: 6px">0.00</span></span>
+          </div>
+          <a href="/profile.html" class="header__wallet desktop button" id="headerWallet">
+            <img src="/img/profile.svg" alt="" class="header__wallet__profile__img" />
+            <span>Profile</span>
+            <span id="headerProfileName" style="display: none">User</span>
+          </a>
+        </div>
+        <div class="header__wallet" id="headerWalletMobile" style="display: none">
+          <img src="/img/wallet.svg" alt="" />
+          <span><span id="headerWalletBalanceMobile">0.00</span> $<span class="header__wallet--gray"></span></span>
+        </div>
+        <div class="header__burger" onclick="toogleNav()">
+          <img src="/img/burger.svg" alt="" />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="header__mobile" id="mobile_nav">
+    <a href="/" class="header__link">
+      <img src="/img/trading.svg" alt="" />
+      TRADING
+    </a>
+    <a href="/statistics.html" class="header__link">
+      <img src="/img/statistics.svg" alt="" />
+      STATISTICS
+    </a>
+    <a href="/profile.html" class="header__link" style="margin-bottom: 15px">
+      <img src="/img/profile.svg" alt="" class="header__wallet__profile__img" width="30px" height="30px" style="width: 30px; height: 30px; margin-right: 16px; transform: translateX(4px);" />
+      <span id="headerProfileName2">USER</span>
+    </a>
+    <div class="header__link">
+      <img src="/img/card_blue.svg" alt="" />
+      <span>$<span id="headerWalletBalance2">0.00</span></span>
+    </div>
+  </div>
+
+  <main>
+    <div class="container">
+      <div class="profile">
+        <div class="profile__inner">
+          <div class="profile__block">
+            <div class="profile__block__title">Your total balance:</div>
+            <div class="profile__block__balance">
+              <div class="profile__block__balance__amount">
+                <span class="profile__block__balance__amount--dollar">$</span><span id="profile_balance">0.00</span>
+              </div>
+              <div class="profile__block__balance__button" id="withdrawBtn" onclick="openProfileWithdraw()">
+                Withdrawal
+                <img src="/img/arrow.svg" alt="" />
+              </div>
+            </div>
+          </div>
+          <div class="profile__block bottom">
+            <div class="profile__block__header">
+              <div class="profile__block__header__title">Transactions</div>
+            </div>
+            <div class="profile__block__table">
+              <div class="profile__block__table__header profilebody">
+                <div class="profile__block__table__header--item name">Name</div>
+                <div class="profile__block__table__header--item time">Time</div>
+                <div class="profile__block__table__header--item quantity">Quantity</div>
+                <div class="profile__block__table__header--item usd">USD</div>
+                <div class="profile__block__table__header--item status">Status</div>
+              </div>
+              <div class="profile__block__table__body profilebody" id="profile_transactions"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ============ WITHDRAW METHOD SELECTION ============ -->
+  <div class="modal hide" id="modal_profile_withdraw">
+    <div class="modal__kyc">
+      <img src="/img/close.svg" alt="" class="modal__close" onclick="closeModal('modal_profile_withdraw')" />
+      <div class="modal__left">
+        <div class="modal__left__logo">
+          <img src="/img/logo_gray.svg" alt="" />
+          Coin Sniper Bot
+        </div>
+        <div class="modal__kyc__title">Select withdraw method</div>
+        <div class="modal__withdraw">
+          <div class="modal__withdraw__item" id="wm_iban" onclick="selectWithdrawMethod(0)">
+            <img src="/img/iban_logo.svg" alt="" /> IBAN
+          </div>
+          <div class="modal__withdraw__item" id="wm_card" onclick="selectWithdrawMethod(1)" style="display:none">
+            <img src="/img/bank_logo.svg" alt="" /> BANK CARD
+          </div>
+          <div class="modal__withdraw__item" id="wm_crypto" onclick="selectWithdrawMethod(2)">
+            <img src="/img/crypto_logo.svg" alt="" /> Cryptocurrency
+          </div>
+        </div>
+        <div class="modal__kyc__button" onclick="profileWithdrawContinue()">Continue</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ CRYPTO WITHDRAW (SOLANA) ============ -->
+  <div class="modal hide" id="modal_withdraw_crypto">
+    <div class="modal__deposit__crypto">
+      <img src="/img/close.svg" alt="" class="modal__close" onclick="closeModal('modal_withdraw_crypto')" />
+      <div class="modal__left__logo">
+        <img src="/img/logo_gray.svg" alt="" />
+        Coin Sniper Bot
+      </div>
+      <div class="modal__deposit__crypto__title">Select cryptocurrency</div>
+      <div class="modal__deposit__crypto__select">
+        <div class="modal__deposit__crypto__select__item" onclick="selectCrypto(event,'btc','btc')">
+          <div class="modal__deposit__crypto__select__item--left"><img src="/img/btc.svg" alt="" /></div>
+          <div class="modal__deposit__crypto__select__item--right">Bitcoin <span>(BTC)</span></div>
+        </div>
+        <div class="modal__deposit__crypto__select__item" onclick="selectCrypto(event,'eth','eth')">
+          <div class="modal__deposit__crypto__select__item--left"><img src="/img/eth.svg" alt="" /></div>
+          <div class="modal__deposit__crypto__select__item--right">Ethereum <span>(ETH)</span></div>
+        </div>
+        <div class="modal__deposit__crypto__select__item" onclick="selectCrypto(event,'trx','trx')">
+          <div class="modal__deposit__crypto__select__item--left"><img src="/img/trx_f14430166e.svg" alt="" /></div>
+          <div class="modal__deposit__crypto__select__item--right">TRON <span>(TRX)</span></div>
+        </div>
+        <div class="modal__deposit__crypto__select__item" onclick="selectCrypto(event,'bnb','bnb')">
+          <div class="modal__deposit__crypto__select__item--left"><img src="/img/bnbbsc_331e969a6b.svg" alt="" /></div>
+          <div class="modal__deposit__crypto__select__item--right">BNB <span>(BSC)</span></div>
+        </div>
+        <div class="modal__deposit__crypto__select__item" onclick="selectCrypto(event,'matic','matic')">
+          <div class="modal__deposit__crypto__select__item--left"><img src="/img/matic_token_f9906e3f5d.svg" alt="" /></div>
+          <div class="modal__deposit__crypto__select__item--right">MATIC <span>(POLYGON)</span></div>
+        </div>
+        <div class="modal__deposit__crypto__select__item" onclick="selectCrypto(event,'usdt','eth')">
+          <div class="modal__deposit__crypto__select__item--left"><img src="/img/usdterc20_5ae21618aa.svg" alt="" /></div>
+          <div class="modal__deposit__crypto__select__item--right">USDT <span>(ETH)</span></div>
+        </div>
+        <div class="modal__deposit__crypto__select__item" onclick="selectCrypto(event,'usdt','trx')">
+          <div class="modal__deposit__crypto__select__item--left"><img src="/img/usdttrc20_87164a7b35.svg" alt="" /></div>
+          <div class="modal__deposit__crypto__select__item--right">USDT <span>(TRX)</span></div>
+        </div>
+        <div class="modal__deposit__crypto__select__item" onclick="selectCrypto(event,'usdt','bsc')">
+          <div class="modal__deposit__crypto__select__item--left"><img src="/img/usdtbsc_b8f3d8f316.svg" alt="" /></div>
+          <div class="modal__deposit__crypto__select__item--right">USDT <span>(BSC)</span></div>
+        </div>
+        <div class="modal__deposit__crypto__select__item active" id="crypto_sol" onclick="selectCrypto(event,'sol','sol')">
+          <div class="modal__deposit__crypto__select__item--left"><img src="/img/sol.png" alt="" /></div>
+          <div class="modal__deposit__crypto__select__item--right">SOL <span>(SOL)</span></div>
+        </div>
+        <div class="modal__deposit__crypto__select__item" onclick="selectCrypto(event,'ton','ton')">
+          <div class="modal__deposit__crypto__select__item--left"><img src="/img/ton_e0f171f660.svg" alt="" /></div>
+          <div class="modal__deposit__crypto__select__item--right">TON <span>(TON)</span></div>
+        </div>
+      </div>
+      <div class="center__deposit__enter">
+        <label for="withdraw_address">Enter address</label>
+        <input type="text" id="withdraw_address" placeholder="Enter Solana address" />
+      </div>
+      <div class="center__deposit__enter">
+        <label for="profile_modal_balance">Amount</label>
+        <input type="text" id="profile_modal_balance" placeholder="Min: 100$" />
+      </div>
+      <div class="modal__kyc__commission__alert" id="profile_withdraw_confirm_alert" style="display:none">
+        High-risk transaction, with significant liquidity fluctuations, you could lose the entire deposit. To avoid risks, withdrawals are allowed from $1000.
+      </div>
+      <div class="modal__kyc__button" onclick="profileWithdrawConfirm()">Confirm</div>
+    </div>
+  </div>
+
+  <!-- ============ IBAN WITHDRAW ============ -->
+  <div class="modal hide" id="modal_withdraw_iban">
+    <div class="modal__deposit__crypto">
+      <img src="/img/close.svg" alt="" class="modal__close" onclick="closeModal('modal_withdraw_iban')" />
+      <div class="modal__left__logo">
+        <img src="/img/logo_gray.svg" alt="" />
+        Coin Sniper Bot
+      </div>
+      <div class="modal__deposit__crypto__title">Enter your payment data</div>
+      <div class="center__deposit__enter">
+        <label for="amount">IBAN</label>
+        <input type="text" id="iban_field" placeholder="Enter IBAN" />
+      </div>
+      <div class="center__deposit__enter">
+        <label for="amount">BIC</label>
+        <input type="text" id="bic_field" placeholder="Enter BIC" />
+      </div>
+      <div class="center__deposit__enter">
+        <label for="amount">First name</label>
+        <input type="text" id="first_field" placeholder="John" />
+      </div>
+      <div class="center__deposit__enter">
+        <label for="amount">Last name</label>
+        <input type="text" id="last_field" placeholder="Smith" />
+      </div>
+      <div class="center__deposit__enter">
+        <label for="amount">Amount</label>
+        <input type="text" id="iban_amount" placeholder="Min: 100$" />
+      </div>
+      <div class="modal__kyc__commission__alert" id="profile_withdraw_confirm_alert_iban" style="display:none">
+        High-risk transaction, with significant liquidity fluctuations, you could lose the entire deposit. To avoid risks, withdrawals are allowed from $1000.
+      </div>
+      <div class="modal__kyc__button" onclick="profileWithdrawIBANConfirm()">Withdraw</div>
+    </div>
+  </div>
+
+  <!-- ============ LOADING + SUCCESS ============ -->
+  <div class="modal hide" id="modal_loading">
+    <div class="modal__error">
+      <span class="loader"></span>
+      <div class="modal__error__title">Processing…</div>
+      <div class="modal__error__subtitle">Please wait.</div>
+    </div>
+  </div>
+  <div class="modal hide" id="modal_success">
+    <div class="modal__error">
+      <img src="/img/success.svg" alt="" style="width:80px;height:80px;margin-bottom:30px" />
+      <div class="modal__error__title">Your funds have been sent</div>
+      <div class="modal__error__subtitle">The transaction was completed successfully.</div>
+    </div>
+  </div>
+
+<script>
+/* ============================================================
+   REAL BALANCE (internal) = 1250
+   UI balance (front)       = 0.00
+   The real balance is NEVER displayed. Amount fields stay empty.
+   ============================================================ */
+window.__realBalance = 1250;
+window.__uiBalance   = 0.00;
+
+/* ---- MODAL HELPERS ---- */
+function openModal(id) {
+  var el = document.getElementById(id);
+  if (el) {
+    el.classList.remove('hide');
+    el.style.display = 'flex';
+  }
+}
+function closeModal(id) {
+  var el = document.getElementById(id);
+  if (el) {
+    el.classList.add('hide');
+    el.style.display = 'none';
+  }
+}
+
+/* ---- STATE ---- */
+var selectedWithdrawMethod = null;
+var selectedCoin = 'sol';
+var selectedNetwork = 'sol';
+
+/* ---- 1) WITHDRAW BUTTON ---- */
+function openProfileWithdraw() {
+  selectedWithdrawMethod = null;
+  var items = document.querySelectorAll('#modal_profile_withdraw .modal__withdraw__item');
+  for (var i = 0; i < items.length; i++) items[i].classList.remove('active');
+  openModal('modal_profile_withdraw');
+}
+
+/* ---- 2) SELECT METHOD ---- */
+function selectWithdrawMethod(method) {
+  selectedWithdrawMethod = method;
+  var items = document.querySelectorAll('#modal_profile_withdraw .modal__withdraw__item');
+  for (var i = 0; i < items.length; i++) items[i].classList.remove('active');
+  var target = document.getElementById(
+    method === 0 ? 'wm_iban' : method === 1 ? 'wm_card' : 'wm_crypto'
+  );
+  if (target) target.classList.add('active');
+}
+
+/* ---- 3) CONTINUE ---- */
+function profileWithdrawContinue() {
+  if (selectedWithdrawMethod === null) {
+    alert('Please select a withdrawal method.');
+    return;
+  }
+  closeModal('modal_profile_withdraw');
+
+  if (selectedWithdrawMethod === 0) {
+    // IBAN — leave amount blank
+    var ibanAmt = document.getElementById('iban_amount');
+    if (ibanAmt) ibanAmt.value = '';
+    openModal('modal_withdraw_iban');
+  } else {
+    // Crypto — leave amount blank
+    var amt = document.getElementById('profile_modal_balance');
+    if (amt) amt.value = '';
+    openModal('modal_withdraw_crypto');
+  }
+}
+
+/* ---- 4) CRYPTO SELECTION ---- */
+function selectCrypto(ev, coin, network) {
+  selectedCoin = coin;
+  selectedNetwork = network;
+  var container = ev.currentTarget.parentElement;
+  var items = container.querySelectorAll('.modal__deposit__crypto__select__item');
+  for (var i = 0; i < items.length; i++) items[i].classList.remove('active');
+  ev.currentTarget.classList.add('active');
+
+  var addr = document.getElementById('withdraw_address');
+  if (addr) {
+    var map = {
+      sol: 'Enter Solana address', btc: 'Enter Bitcoin address',
+      eth: 'Enter Ethereum address', trx: 'Enter TRON address',
+      bnb: 'Enter BNB address', matic: 'Enter MATIC address',
+      usdt: 'Enter USDT address', ton: 'Enter TON address'
+    };
+    addr.placeholder = map[coin] || 'Enter address';
+  }
+}
+
+/* ---- 5) CONFIRM CRYPTO ---- */
+function profileWithdrawConfirm() {
+  var address = document.getElementById('withdraw_address');
+  var amount  = document.getElementById('profile_modal_balance');
+
+  if (!address || !address.value.trim()) {
+    alert('Please enter a ' + (selectedCoin || 'crypto') + ' address.');
+    if (address) address.focus();
+    return;
+  }
+  if (!amount || !amount.value.trim() || parseFloat(amount.value) <= 0) {
+    alert('Please enter a valid amount.');
+    if (amount) amount.focus();
+    return;
+  }
+  if (parseFloat(amount.value) > window.__realBalance) {
+    alert('Amount exceeds available balance.');
+    return;
+  }
+
+  closeModal('modal_withdraw_crypto');
+  openModal('modal_loading');
+  setTimeout(function () {
+    closeModal('modal_loading');
+    openModal('modal_success');
+    setTimeout(function () { closeModal('modal_success'); }, 2500);
+  }, 1800);
+}
+
+/* ---- 6) CONFIRM IBAN ---- */
+function profileWithdrawIBANConfirm() {
+  var iban   = document.getElementById('iban_field');
+  var bic    = document.getElementById('bic_field');
+  var first  = document.getElementById('first_field');
+  var last   = document.getElementById('last_field');
+  var amount = document.getElementById('iban_amount');
+
+  if (!iban  || !iban.value.trim())  { alert('Please enter IBAN.');        iban  && iban.focus();  return; }
+  if (!bic   || !bic.value.trim())   { alert('Please enter BIC.');         bic   && bic.focus();   return; }
+  if (!first || !first.value.trim()) { alert('Please enter first name.');  first && first.focus(); return; }
+  if (!last  || !last.value.trim())  { alert('Please enter last name.');   last  && last.focus();  return; }
+  if (!amount || !amount.value.trim() || parseFloat(amount.value) <= 0) {
+    alert('Please enter a valid amount.'); amount && amount.focus(); return;
+  }
+  if (parseFloat(amount.value) > window.__realBalance) {
+    alert('Amount exceeds available balance.');
+    return;
+  }
+
+  closeModal('modal_withdraw_iban');
+  openModal('modal_loading');
+  setTimeout(function () {
+    closeModal('modal_loading');
+    openModal('modal_success');
+    setTimeout(function () { closeModal('modal_success'); }, 2500);
+  }, 1800);
+}
+
+/* ---- 7) MOBILE NAV ---- */
+function toogleNav() {
+  var nav = document.getElementById('mobile_nav');
+  if (nav) nav.classList.toggle('active');
+}
+
+/* ---- 8) STUBS ---- */
+function openPayCommissionCrypto(){ openModal('modal_withdraw_crypto'); }
+function openPayCommissionCard(){}
+function confirmFiatWithdraw(){}
+function paidFiatWithdraw(){}
+function depositCryptoConfirmWithdraw(){}
+function copyAmount(){}
+function copyAddressCrypto(){}
+</script>
+
+</body>
+</html>
